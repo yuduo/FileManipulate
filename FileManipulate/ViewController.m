@@ -17,7 +17,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    //[self listAllLocalFiles];
+    [self HFile];
+    return;
+    
     NSString *tmp;
     NSString *fileName = @"new 2.txt";
     NSArray *lines; /*将文件转化为一行一行的*/
@@ -89,6 +92,9 @@
         NSError *error = nil;
         NSString *content = [NSString stringWithContentsOfFile:filePath encoding:NSStringEncodingConversionAllowLossy error:&error];
 //        NSLog(@"File Content: %@", content);
+        if (content == nil) {
+            return;
+        }
         NSString *append=@"";
         if ([className containsString:@":"]) {
             NSString *newstr=@"";
@@ -127,6 +133,10 @@
     }
     if ([manager createFileAtPath:filePath contents:nil attributes:nil]) {
 //        NSLog(@"Created the File Successfully.");
+        NSString *classname = [fileName substringToIndex:[fileName length]-2];
+        NSString *initStr = [NSString stringWithFormat:@"#import \"define.h\"\n\r#import \"%@.h\"\n\r@implementation %@\n\r",classname,classname];
+        NSError *error = nil;
+        [initStr writeToFile:filePath atomically:YES encoding:NSStringEncodingConversionAllowLossy error:&error];
     } else {
         NSLog(@"Failed to Create the File");
     }
@@ -249,6 +259,81 @@
     // For each file, log the name of it.
     for (NSString *file in files) {
         NSLog(@"File at: %@", file);
+        NSString *new_filename;
+        [self saveStringToFIle:@"@end" filename :file];
+    }
+}
+
+- (void)saveStringToFIle:(NSString*)str filename:(NSString*)fileName
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    // Have the absolute path of file named fileName by joining the document path with fileName, separated by path separator.
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+    
+    // NSFileManager is the manager organize all the files on device.
+    NSFileManager *manager = [NSFileManager defaultManager];
+    if ([manager fileExistsAtPath:filePath]) {
+        // Start to Read.
+        NSError *error = nil;
+        NSString *content = [NSString stringWithContentsOfFile:filePath encoding:NSStringEncodingConversionAllowLossy error:&error];
+        //        NSLog(@"File Content: %@", content);
+        if (content == nil) {
+            return;
+        }
+        
+        
+        content = [content stringByAppendingString:str];
+        [content writeToFile:filePath atomically:YES encoding:NSStringEncodingConversionAllowLossy error:&error];
+        if (error) {
+            NSLog(@"There is an Error: %@", error);
+        }
+    } else {
+        NSLog(@"File %@ doesn't exists", fileName);
+    }
+}
+
+-(void)HFile
+{
+    // Fetch directory path of document for local application.
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    
+    // NSFileManager is the manager organize all the files on device.
+    NSFileManager *manager = [NSFileManager defaultManager];
+    // This function will return all of the files' Name as an array of NSString.
+    NSArray *files = [manager contentsOfDirectoryAtPath:documentsDirectory error:nil];
+    // Log the Path of document directory.
+    NSLog(@"Directory: %@", documentsDirectory);
+    // For each file, log the name of it.
+    for (NSString *file in files) {
+        NSLog(@"File at: %@", file);
+        if (![file containsString:@".m"]) {
+            continue;
+        }
+        NSString *fileName = [file stringByReplacingOccurrencesOfString:@".m" withString:@".h"];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+        
+        NSFileManager *manager = [NSFileManager defaultManager];
+        // 1st, This funcion could allow you to create a file with initial contents.
+        // 2nd, You could specify the attributes of values for the owner, group, and permissions.
+        // Here we use nil, which means we use default values for these attibutes.
+        // 3rd, it will return YES if NSFileManager create it successfully or it exists already.
+        if ([manager fileExistsAtPath:filePath])
+        {
+            continue;
+        }
+        if ([manager createFileAtPath:filePath contents:nil attributes:nil]) {
+            //        NSLog(@"Created the File Successfully.");
+            NSString *classname = [fileName substringToIndex:[fileName length]-2];
+            NSString *initStr = [NSString stringWithFormat:@"#import <Foundation/Foundation.h>\n\r@interface %@ : NSObject\n\r@end",classname];
+            NSError *error = nil;
+            [initStr writeToFile:filePath atomically:YES encoding:NSStringEncodingConversionAllowLossy error:&error];
+        } else {
+            NSLog(@"Failed to Create the File");
+        }
     }
 }
 @end
