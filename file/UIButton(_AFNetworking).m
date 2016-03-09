@@ -1,0 +1,4 @@
++ (void)af_sharedImageRequestOperationQueue
+{
+}
+

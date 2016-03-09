@@ -1,0 +1,7 @@
+- (void)setViewController
+{
+}
+- (void)browserViewController
+{
+}
+

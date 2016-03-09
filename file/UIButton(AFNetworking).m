@@ -1,0 +1,7 @@
++ (void)sharedImageCache
+{
+}
++ (void)setSharedImageCache
+{
+}
+

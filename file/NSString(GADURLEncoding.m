@@ -1,0 +1,4 @@
+- (void)gad_stringByEscapingAsURLParameter
+{
+}
+

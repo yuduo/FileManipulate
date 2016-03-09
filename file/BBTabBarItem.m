@@ -1,0 +1,7 @@
++ (void)tabBarItemWithSetting
+{
+}
++ (void)systemItems
+{
+}
+

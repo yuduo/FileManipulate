@@ -1,0 +1,7 @@
+- (void)logPublicMessage
+{
+}
++ (void)sharedInstance
+{
+}
+

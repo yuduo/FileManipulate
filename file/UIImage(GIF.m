@@ -1,0 +1,4 @@
+- (void)sd_animatedImageByScalingAndCroppingToSize
+{
+}
+

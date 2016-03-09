@@ -1,0 +1,7 @@
+- (void)productViewControllerDidFinish
+{
+}
++ (void)sharedInstance
+{
+}
+
